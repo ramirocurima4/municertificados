@@ -6,6 +6,7 @@ __pycache__/
 *.sqlite3
 build/
 dist/
-*.spec
+dist_installer/
+!MuniCertificados.spec
 .DS_Store
 Thumbs.db

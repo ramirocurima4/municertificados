@@ -19,6 +19,7 @@ from src.config import (
     ASSETS_LOGOS_DIR,
     DEFAULT_DPI,
     FONTS_DIR,
+    PRESET_TEMPLATES_DIR,
     SUPPORTED_PDF_EXTENSIONS,
 )
 from src.services.validators import format_dni_display, is_supported_asset, normalize_name
@@ -362,10 +363,18 @@ def render_certificate_image(
     config: dict[str, Any] = template_data.get("config", {})
     placeholders = _build_placeholders(person_data, course_data)
 
-    bg_path = template_data.get("bg_path", "")
-    if bg_path and Path(bg_path).is_file():
+    bg_path = str(template_data.get("bg_path", "") or "").strip()
+    bg_file: Path | None = None
+    if bg_path:
+        candidate_bg = Path(bg_path)
+        if candidate_bg.is_file():
+            bg_file = candidate_bg
+        elif (PRESET_TEMPLATES_DIR / candidate_bg.name).is_file():
+            bg_file = PRESET_TEMPLATES_DIR / candidate_bg.name
+
+    if bg_file is not None:
         canvas = load_visual_asset(
-            bg_path, target_size=(width, height), transparent=True
+            bg_file, target_size=(width, height), transparent=True
         )
     else:
         canvas = Image.new("RGBA", (width, height), (250, 248, 242, 255))

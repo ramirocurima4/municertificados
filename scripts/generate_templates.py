@@ -810,6 +810,27 @@ def main() -> None:
     generate_modern_emerald_slate(OUT_DIR / "plantilla_moderna_pizarra.png")
     generate_solemn_burgundy_gold(OUT_DIR / "plantilla_solemne_borgona.png")
 
+    # 14. Generar ícono oficial de Windows (assets/app_icon.ico) a partir del escudo municipal
+    assets_dir = OUT_DIR.parent
+    escudo_path = assets_dir / "logos" / "logo_san_roque_escudo.png"
+    ico_path = assets_dir / "app_icon.ico"
+    if escudo_path.is_file():
+        with Image.open(escudo_path) as escudo:
+            rgba = escudo.convert("RGBA")
+            side = max(rgba.width, rgba.height, 256)
+            square = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+            square.alpha_composite(
+                rgba,
+                dest=((side - rgba.width) // 2, (side - rgba.height) // 2),
+            )
+            square = square.resize((256, 256), Image.Resampling.LANCZOS)
+            square.save(
+                ico_path,
+                format="ICO",
+                sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)],
+            )
+        print(f"Ícono de aplicación generado en {ico_path}")
+
     print(f"13 plantillas institucionales generadas en {OUT_DIR}")
 
 

@@ -140,14 +140,20 @@ El sistema sigue una arquitectura modular en capas (sin dependencias pesadas com
 muni-forms/
 ├── main.py                    # Punto de entrada de la aplicación
 ├── requirements.txt           # Dependencias livianas (customtkinter, pillow, pymupdf, openpyxl, numpy)
-├── iniciar_windows.bat        # Arranque automático en Windows 10/11
-├── iniciar_linux.sh           # Arranque automático en Linux
+├── MuniCertificados.spec      # Especificación de compilación PyInstaller (--onedir, sin consola)
+├── installer.iss              # Script de instalador oficial Windows (Inno Setup 6)
+├── build_installer.bat        # Compilador local en 1 clic (PyInstaller + Inno Setup)
+├── iniciar_windows.bat        # Arranque automático desde código fuente en Windows 10/11
+├── iniciar_linux.sh           # Arranque automático desde código fuente en Linux
+├── .github/workflows/
+│   └── build-windows.yml      # Compilación automática en la nube (GitHub Actions -> Windows .exe)
 ├── assets/
+│   ├── app_icon.ico           # Ícono oficial multi-resolución con el Escudo Municipal
 │   ├── fonts/                 # 25 archivos tipográficos TTF embebidos (15+ familias)
 │   ├── logos/                 # Logos oficiales transparentes de la Municipalidad de San Roque
 │   └── templates/             # 13 plantillas institucionales A4 Apaisado a 300 DPI
 ├── scripts/
-│   └── generate_templates.py  # Generador vectorial/ráster de las 13 plantillas base
+│   └── generate_templates.py  # Generador vectorial/ráster de las 13 plantillas e ícono .ico
 ├── src/
 │   ├── config.py              # Gestión de rutas multiplataforma y soporte sys._MEIPASS (PyInstaller)
 │   ├── database/              # Conexión SQLite, esquema auto-inicializable y repositorios CRUD
@@ -157,7 +163,22 @@ muni-forms/
     └── test_phase1_phase2.py  # Suite de pruebas automatizadas (unittest)
 ```
 
-### Próximo Paso: Fase 4 (Empaquetado `.exe` e Instalador Windows)
-Una vez validado el sistema en las computadoras del Área de Modernización y Redes, la **Fase 4** contempla:
-1. Compilación del ejecutable autónomo para Windows (`MuniCertificados.exe`) mediante **PyInstaller** (integrando `assets/fonts/`, `assets/logos/` y `assets/templates/` sin requerir Python instalado en las PCs administrativas).
-2. Generación del instalador oficial de escritorio **`Setup_MuniCertificados.exe`** con **Inno Setup**, creando accesos directos en el Escritorio y Menú Inicio listos para distribución interna municipal.
+---
+
+## 6. Compilación y Descarga del Instalador Windows (`Setup_MuniCertificados_v1.0.exe`)
+
+El proyecto cuenta con dos vías listas para obtener el instalador ejecutable para Windows 10 / 11 (sin necesidad de instalar Python en las computadoras administrativas):
+
+### Opción 1: Compilación Automática en la Nube (GitHub Actions — Recomendado desde Linux)
+1. Subir los cambios al repositorio de GitHub (`git push origin main`).
+2. Ingresar a la pestaña **Actions** del repositorio en GitHub y seleccionar el workflow **"Build Windows Installer (MuniCertificados)"** (también puede ejecutarse manualmente con el botón **Run workflow**).
+3. Al finalizar (aprox. 2–3 minutos), descargar desde la sección **Artifacts**:
+   - **`Instalador-Windows-Setup_MuniCertificados_v1.0`**: contiene el instalador oficial **`Setup_MuniCertificados_v1.0.exe`** en español, que instala el sistema en el equipo, crea los accesos directos con el escudo municipal en el Escritorio y Menú Inicio, y preserva intacta la carpeta `Documentos\Muni_Certificados` al actualizar o desinstalar.
+   - **`Portable-Windows-MuniCertificados`**: carpeta portable lista para ejecutar sin instalación.
+
+### Opción 2: Compilación Local en una PC con Windows
+1. Instalar Python 3.11+ e [Inno Setup 6](https://jrsoftware.org/isdl.php).
+2. Hacer doble clic sobre **`build_installer.bat`**.
+3. El script creará el entorno virtual, ejecutará `PyInstaller` (`MuniCertificados.spec`) e `ISCC.exe` (`installer.iss`), generando:
+   - Ejecutable portable en: `dist\MuniCertificados\MuniCertificados.exe`
+   - Instalador oficial en: `dist_installer\Setup_MuniCertificados_v1.0.exe`

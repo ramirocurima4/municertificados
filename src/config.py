@@ -39,6 +39,7 @@ ASSETS_DIR = get_resource_path("assets")
 FONTS_DIR = ASSETS_DIR / "fonts"
 PRESET_TEMPLATES_DIR = ASSETS_DIR / "templates"
 ASSETS_LOGOS_DIR = ASSETS_DIR / "logos"
+APP_ICON_PATH = ASSETS_DIR / "app_icon.ico"
 
 
 def get_user_documents_dir() -> Path:

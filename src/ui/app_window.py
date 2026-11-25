@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import os
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog
 
 import customtkinter as ctk
 
-from src.config import APP_DATA_DIR, APP_NAME, APP_SUBTITLE
+from src.config import APP_DATA_DIR, APP_ICON_PATH, APP_NAME, APP_SUBTITLE
 from src.database.repositories import CourseRepository
 from src.services.file_manager import backup_database, open_folder_in_explorer
 from src.ui.components.widgets import (
@@ -40,6 +41,11 @@ class AppWindow(ctk.CTk):
         self.geometry("1280x780")
         self.minsize(1080, 680)
         self.configure(fg_color=BG_WINDOW)
+        if os.name == "nt" and APP_ICON_PATH.is_file():
+            try:
+                self.iconbitmap(str(APP_ICON_PATH))
+            except Exception:
+                pass
 
         self.course_repo = CourseRepository()
         self._active_course_id: int | None = None
